@@ -3,6 +3,7 @@
 
 #include "physics.h"
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <cmath>
 #include <GLFW/glfw3.h>
@@ -32,7 +33,15 @@ void draw_circle (double x, double y, double r, double resolution)
 int main ()
 {
 	GLFWwindow *window;
-	
+	std::string file_name;
+	std::cin >> file_name;
+	std::ifstream file(file_name);
+	if (!file.is_open()) {
+		std::cerr << "Could not open file";
+		return -1;
+	}
+	int body_count;
+	file >> body_count;	
 	if (!glfwInit ())
 		return -1;
 	
@@ -44,28 +53,19 @@ int main ()
 		}
 	
 	glfwMakeContextCurrent (window);
-	int r = 100;
 	std::vector<physics::phy_space_body *> bodies;
-	bodies.push_back ((physics::phy_space_body *) std::malloc (sizeof (physics::phy_space_body)));
-	bodies.push_back ((physics::phy_space_body *) std::malloc (sizeof (physics::phy_space_body)));
-	double velocity = 150;
-	bodies[1]->mass = 1000000000;
-	bodies[1]->radius = 50;
-	bodies[1]->x = r;
-	bodies[1]->y = 0;
-	bodies[1]->velocity  ={ physics::phy_vector_type::PHY_VECTOR_VELOCITY, 0, velocity };
-	bodies[1]->net_force = { physics::phy_vector_type::PHY_VECTOR_FORCE, 0, 0 };
-	bodies[1]->acceleration = { physics::phy_vector_type::PHY_VECTOR_ACCELERATION, 0, 0 };
-	bodies[1]->propulsion = { physics::phy_vector_type::PHY_VECTOR_FORCE, 0, 0 };
-	
-	bodies[0]->mass = 1000000000;
-	bodies[0]->radius = 50;
-	bodies[0]->x = -r;
-	bodies[0]->y = 0;
-	bodies[0]->velocity = { physics::phy_vector_type::PHY_VECTOR_VELOCITY, 0, -velocity};
-	bodies[0]->net_force = { physics::phy_vector_type::PHY_VECTOR_FORCE, 0, 0 };
-	bodies[0]->acceleration = { physics::phy_vector_type::PHY_VECTOR_ACCELERATION, 0, 0 };
-	bodies[0]->propulsion = { physics::phy_vector_type::PHY_VECTOR_FORCE, 0, 0 };
+	for (int i = 0; i < body_count; i++) {
+		bodies.push_back((physics::phy_space_body*) std::malloc(sizeof(physics::phy_space_body)));
+		file >> bodies[i]->mass;
+		file >> bodies[i]->x;
+		file >> bodies[i]->y;
+		file >> bodies[i]->radius;
+		file >> bodies[i]->velocity.x;
+		file >> bodies[i]->velocity.y;		;
+		file >> bodies[i]->propulsion.x;
+		file >> bodies[i]->propulsion.y;
+
+	}
 
 	double current_frame = glfwGetTime();
 	double last_frame = current_frame;
