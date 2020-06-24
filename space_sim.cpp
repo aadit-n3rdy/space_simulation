@@ -61,7 +61,7 @@ int main ()
 		file >> bodies[i]->y;
 		file >> bodies[i]->radius;
 		file >> bodies[i]->velocity.x;
-		file >> bodies[i]->velocity.y;		;
+		file >> bodies[i]->velocity.y;
 		file >> bodies[i]->propulsion.x;
 		file >> bodies[i]->propulsion.y;
 
